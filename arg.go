@@ -2,6 +2,7 @@ package dcmd
 
 import (
 	"bytes"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -297,7 +298,9 @@ func (sopts *SlashCommandsParseOptions) ExpectUser(name string) (*discordgo.User
 }
 
 func (sopts *SlashCommandsParseOptions) ExpectUserOpt(name string) (*discordgo.User, bool, error) {
+	fmt.Println("\nExpectUserOpt: ", name)
 	id, found, err := sopts.ExpectInt64Opt(name)
+	fmt.Println("id: ", id)
 	if err != nil || !found {
 		return nil, found, err
 	}
@@ -744,7 +747,9 @@ func (u *UserIDArg) ParseFromMessage(def *ArgDef, part string, data *Data) (inte
 }
 
 func (u *UserIDArg) ParseFromInteraction(def *ArgDef, data *Data, options *SlashCommandsParseOptions) (val interface{}, err error) {
+	fmt.Println("\nParseFromInteraction: ", def.Name)
 	user, found, err := options.ExpectUserOpt(def.Name)
+	fmt.Println("found? ", found)
 	if err != nil {
 		return nil, err
 	}
@@ -753,11 +758,13 @@ func (u *UserIDArg) ParseFromInteraction(def *ArgDef, data *Data, options *Slash
 	}
 
 	idStr, err := options.ExpectString(def.Name + "-ID")
+	fmt.Println("idStr: ", idStr)
 	if err != nil {
 		return nil, err
 	}
 
 	id, err := strconv.ParseInt(idStr, 10, 64)
+	fmt.Println("id: ", id)
 	return id, err
 }
 
@@ -767,6 +774,7 @@ func (u *UserIDArg) HelpName() string {
 
 func (u *UserIDArg) SlashCommandOptions(def *ArgDef) []*discordgo.ApplicationCommandOption {
 	// Give the user the ability to pick one of these, sadly discord slash commands does not have a basic "one of" type
+	fmt.Println("\nSlashCommandOptions")
 	optID := def.StandardSlashCommandOption(discordgo.CommandOptionTypeString)
 	optUser := def.StandardSlashCommandOption(discordgo.CommandOptionTypeUser)
 
